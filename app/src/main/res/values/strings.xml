@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">RepeatAlarm</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="repeat">
+        <item>No repeat</item>
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Selected week days</item>
+    </string-array>
+    <string-array name="weekdays">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+    <string name="title_activity_canel">CanelActivity</string>
+    <string name="title_activity_logs">LogsActivity</string>
+    <string name="title_activity_alarms">AlarmsActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+</resources>
