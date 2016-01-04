@@ -18,7 +18,9 @@ public class BootReceiver extends BroadcastReceiver {
     SQLiteDatabase db;
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
+        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")
+                || intent.getAction().equals("android.intent.action.QUICKBOOT_POWERON")
+                || intent.getAction().equals("android.intent.action.REBOOT")){
             // Set the alarm here.
 
             setParentAlarm(context);
@@ -48,13 +50,6 @@ public class BootReceiver extends BroadcastReceiver {
         String log="Parent Alarm set at " + cal.getTime() + ", Id " + parentid + " after Booting";
         String insertlog="INSERT INTO logs (Log) VALUES ('"+log+"')";
         db.execSQL(insertlog);
-
-       /* ComponentName receiver = new ComponentName(context, BootReceiver.class);        //For Booting and stuff
-        PackageManager pm = context.getPackageManager();
-
-        pm.setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);*/
     }
 
     public void setChildAlarms(Context context) {
