@@ -49,12 +49,6 @@ public class MainActivity extends Activity {
         set=(Button)findViewById(R.id.button);
         weekdays=new ArrayList<Integer>();
 
-        db=getApplicationContext().openOrCreateDatabase("RepeatAlarm", Context.MODE_PRIVATE, null);
-        String createlogs="CREATE TABLE IF NOT EXISTS logs (Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Log VARCHAR NOT NULL)";
-        db.execSQL(createlogs);
-        String createalarm="CREATE TABLE IF NOT EXISTS alarms ( Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, AId INTEGER NOT NULL , Time VARCHAR NOT NULL, Date VARCHAR NOT NULL , RepeatType VARCHAR NOT NULL)";
-        db.execSQL(createalarm);
-
         /*String removealarm="DELETE FROM alarms WHERE RepeatType='No repeat'";                 //Dont Use....!!!
         db.execSQL(removealarm);*/
 
