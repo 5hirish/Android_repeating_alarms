@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,7 +35,6 @@ public class MainActivity extends Activity {
     String repeat;
     ArrayList<Integer> weekdays;
 
-    SQLiteDatabase db;
     SharedPreferences sp;
 
 
@@ -142,8 +142,6 @@ public class MainActivity extends Activity {
 
     private void setChildAlarms(int ahr, int amin, String repeat, ArrayList<Integer> weekdays) {
 
-        db=getApplicationContext().openOrCreateDatabase("RepeatAlarm", Context.MODE_PRIVATE, null);
-
         Calendar cdate=Calendar.getInstance();
         int d=cdate.get(Calendar.DATE);
         int m=cdate.get(Calendar.MONTH)+1;
@@ -154,8 +152,14 @@ public class MainActivity extends Activity {
         cal.set(Calendar.MINUTE, amin);
         String time=ahr+":"+amin;
 
+        SQLiteHelper db = new SQLiteHelper(getApplicationContext());
+        SQLiteDatabase dbr = db.getReadableDatabase();
+        SQLiteDatabase dbw = db.getWritableDatabase();
+
+
         String countalarm="SELECT MAX(Id) FROM alarms";
-        Cursor cur=db.rawQuery(countalarm, null);
+
+        Cursor cur=dbr.rawQuery(countalarm, null);
         if(cur!=null){
             if(cur.moveToFirst()){
                aid = cur.getInt(0);
@@ -195,34 +199,44 @@ public class MainActivity extends Activity {
                     alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, calw.getTimeInMillis(), 0, wpendingIntent);
                     Log.d("Child Alarm", "Child Alarm set at " + calw.getTime() + ", Id " + wid + ", Repeating " + repeat);
                     String log="Child Alarm set at " + calw.getTime() + ", Id " + wid + ", Repeating " + repeat;
-                    String insertlog="INSERT INTO logs (Log) VALUES ('"+log+"')";
-                    db.execSQL(insertlog);
+                    db.insert_log(log,getApplicationContext());
 
                     d=calw.get(Calendar.DATE);
                     m=calw.get(Calendar.MONTH)+1;
                     date=d+"/"+m;
-                    String insertalarm="INSERT INTO alarms ( AId, Time, Date, RepeatType) VALUES("+wid+",'"+time+"','"+date+"','"+repeat+"')";
-                    db.execSQL(insertalarm);
+
+                    ContentValues insert_alarms = new ContentValues();
+                    insert_alarms.put(db.Alarm_AId,wid);
+                    insert_alarms.put(db.Alarm_Time, time);
+                    insert_alarms.put(db.Alarm_Date, date);
+                    insert_alarms.put(db.Alarm_RepeatType, repeat);
+
+                    long resid = dbw.insert(db.Alarm_Table,null,insert_alarms);
+
                     wid++;
                 }
             }
         }
         else {
 
-            alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),0,alarmintent);
+            alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 0, alarmintent);
             Log.d("Child Alarm", "Child Alarm set at " + cal.getTime() + ", Id " + aid+", Repeating "+repeat);
             String log="Child Alarm set at " + cal.getTime() + ", Id " + aid + ", Repeating " + repeat;
-            String insertlog="INSERT INTO logs (Log) VALUES ('"+log+"')";
-            db.execSQL(insertlog);
+            db.insert_log(log,getApplicationContext());
 
-            String insertalarm="INSERT INTO alarms ( AId, Time, Date, RepeatType) VALUES("+aid+",'"+time+"','"+date+"','"+repeat+"')";
-            db.execSQL(insertalarm);
+
+            ContentValues insert_alarms = new ContentValues();
+            insert_alarms.put(db.Alarm_AId,aid);
+            insert_alarms.put(db.Alarm_Time, time);
+            insert_alarms.put(db.Alarm_Date, date);
+            insert_alarms.put(db.Alarm_RepeatType, repeat);
+
+            long resid = dbw.insert(db.Alarm_Table,null,insert_alarms);
         }
     }
 
     private void setParentAlarm() {
-
-        db=getApplicationContext().openOrCreateDatabase("RepeatAlarm", Context.MODE_PRIVATE, null);
+        SQLiteHelper db = new SQLiteHelper(getApplicationContext());
 
         int parentid=978912;
         Calendar cal=Calendar.getInstance();
@@ -239,8 +253,8 @@ public class MainActivity extends Activity {
 
         Log.d("Parent Alarm", "Parent Alarm set at " + cal.getTime() + ", Id " + parentid);
         String log="Parent Alarm set at " + cal.getTime() + ", Id " + parentid;
-        String insertlog="INSERT INTO logs (Log) VALUES ('"+log+"')";
-        db.execSQL(insertlog);
+        db.insert_log(log,getApplicationContext());
+
     }
 
     @Override
